@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our First Game</title>
+  </head>
+  <body>
+    <script>
+      let game = null;
+      let scene = new Phaser.Scene("game");
+      let logo = null;
+      let speedX = 5;
+      let speedY = 5;
+      let dirCoff = 3;
+      let score = 0;
+      let text = null;
+
+      const config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        scene: scene,
+      };
+
+      window.addEventListener("load", () => {
+        game = new Phaser.Game(config);
+      });
+
+      scene.init = function () {
+        // console.log("init");
+      };
+
+      scene.preload = function () {
+        this.load.image("logo", "./logo.png");
+        this.load.on(
+          "progress",
+          function (progress) {
+            console.log(progress);
+          },
+          this
+        );
+      };
+
+      scene.create = function () {
+        logo = this.add.image(300, 200, "logo");
+        logo.setScale(0.5);
+        logo.setInteractive();
+        logo.on(
+          "pointerdown",
+          function () {
+            score++;
+            text.setText(`score - ${score}`);
+            logo.x = Math.random() * 800;
+            logo.y = Math.random() * 600;
+            speedX *= Math.random() > 0.5 ? 1 : -1;
+            speedY *= Math.random() > 0.5 ? 1 : -1;
+            dirCoff = Math.random() * 12 + 2 * Math.random() > 0.5 ? 1 : -1;
+          },
+          this
+        );
+
+        text = this.add.text(10, 10, `score - ${score}`, { fontSize: 32 });
+      };
+
+      scene.update = function () {
+        logo.x += speedX;
+        logo.y += Math.cos(Math.PI / dirCoff) * speedY;
+        if (logo.x >= 800 || logo.x <= 0) {
+          speedX *= -1;
+        }
+
+        if (logo.y >= 600 || logo.y <= 0) {
+          speedY *= -1;
+        }
+      };
+    </script>
+  </body>
+</html>
